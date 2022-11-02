@@ -79,8 +79,54 @@ const makeGuess = function(guessInput){
 	else {
 		guessedLetters.push(guess);
 		console.log(guessedLetters);
+		//call showGuessedLetters here so it displays a letter that hasn't been guessed before
+		showGuessedLetters();
+		updateWordInProgress(guessedLetters);
 	};
 }
 
+// Function to show guessed letters
 
+
+const showGuessedLetters = function(){
+	//Clear the list first
+	guessedLettersElement.innerHTML = "";
+	for (const letter of guessedLetters) {
+		let li = document.createElement("li");
+		li.innerText = letter;
+		guessedLettersElement.append(li);
+		
+		
+	}
+}; 
+ // Function to update word in progress and to reveal the correct letters in place of the dot
+
+const updateWordInProgress = function(guessedLetters){
+	const wordUpper = word.toUpperCase();
+	// I see splitting the wordupper's string as splitting the word into letters
+	const wordArray = wordUpper.split("");
+	//console.log(wordArray);
+	const revealWord = [];
+	for (let letter of wordArray){
+		if(guessedLetters.includes(letter)){
+			revealWord.push(letter.toUpperCase());
+		} else{
+			revealWord.push("●");
+		}
+	}
+	//join is joining array elements into a string
+	wordInProgress.innerText = revealWord.join("");
+	
+	playerWon();
+		
+	}
+
+//Function to check if the player won
+
+const playerWon = function(){
+	if (word.toUpperCase()===wordInProgress.innerText){
+		guessLetterMessages.classList.add("win");
+		guessLetterMessages.innerHTML = `<p class = "highlight"> You guessed the correct word! Congrats!</p>`;
+	}
+}
 
