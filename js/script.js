@@ -4,25 +4,45 @@ const guessedLettersElement = document.querySelector(".guessed-letters");
 const guessButton = document.querySelector("button");
 const inputLetter = document.querySelector("input");
 const wordInProgress = document.querySelector(".word-in-progress");
-const remainingGuesses = document.querySelector(".remaining");
-const spanRemainingGuesses = document.querySelector("span");
+const remainingGuessesSpan = document.querySelector(".remaining");
+const spanRemainingGuesses = document.querySelector("span"); // remaining guesses message span
 const guessLetterMessages= document.querySelector(".message");
 const playAgainButton = document.querySelector(".hide");
 
-const word = "magnolia";
+let word = "magnolia";
+
 //Guessed letters will be stored in this array
 const guessedLetters = [];
 
+// Number of guesses left
+// let is used here instead of const because this variable is reassigned a value
+let remainingGuesses = 8;
 
+const getWord = async function(){
+	const res = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
+	// this shows the data as a text file instead of json 
+	const words = await res.text()
+	//console.log(data);
+	//creates an array and the "n" is a delimiter, a character to seperate the words, in the split method
+	const wordArray = words.split("\n");
+	//console.log(wordArray);
+	const randomIndex = Math.floor(Math.random()* wordArray.length);
+	word = wordArray[randomIndex].trim();
+	placeholder(word);
+};
+
+
+
+getWord();
 
 
 //Function to add placeholders for each letter
 
-const symbolsAsWords = function(word){
+const placeholder = function(word){
 	//use an empty array to store the word
 	const symbolsForLetters = [];
 	for (let letters of word){
-		console.log(letters);
+		console.log(letters); // can see the random word in the console log 
 		symbolsForLetters.push("●");
 	};
 	
@@ -42,15 +62,15 @@ guessButton.addEventListener("click", function(e){
 	//empty the message
 	guessLetterMessages.innerText = "";
 	// save the function call to a variable, so the variable is going to store the value of the guessinput
-	const goodGuess = checkInput(guessInput);
+	const goodGuess = validateInput(guessInput);
 	console.log(goodGuess);
 	
-	makeGuess(guessInput);
+	makeGuess(goodGuess);
 })
 
 
-//Function to check Player's Input
-const checkInput = function(input){
+//Function to check Player's Input is a letter. Its not checking if its the right letter thats the makeGuess function
+const validateInput = function(input){
 	const acceptedLetter = /[a-zA-Z]/;
 	//using length to determine if the input is empty instead of an empty string ""
 	if(input.length === 0){
@@ -80,9 +100,12 @@ const makeGuess = function(guessInput){
 		guessedLetters.push(guess);
 		console.log(guessedLetters);
 		//call showGuessedLetters here so it displays a letter that hasn't been guessed before
+		
 		showGuessedLetters();
 		updateWordInProgress(guessedLetters);
-	};
+		 // guess argument is the guessInput which is the inputLetter value. So the letter I put in the box
+		countGuessesRemaining(guess);
+	}
 }
 
 // Function to show guessed letters
@@ -126,7 +149,26 @@ const updateWordInProgress = function(guessedLetters){
 const playerWon = function(){
 	if (word.toUpperCase()===wordInProgress.innerText){
 		guessLetterMessages.classList.add("win");
-		guessLetterMessages.innerHTML = `<p class = "highlight"> You guessed the correct word! Congrats!</p>`;
+		guessLetterMessages.innerHTML = `<p class = "highlight"> You guessed the correct word ${word}! Congrats!</p>`;
 	}
 }
+// function to count guesses remaining
+const countGuessesRemaining = function(guess){
+	const upperWord = word.toUpperCase();
+	if (!upperWord.includes(guess)){
+		guessLetterMessages.innerText = `${guess} is incorrect`;
+		remainingGuesses -= 1;
+	} else{
+		guessLetterMessages.innerText = `${guess} is correct`;
+	}
+	
+	if(remainingGuesses === 0){
+		guessLetterMessages.innerHTML = `Game over and the word is <span class = "highlight">${upperWord}</span>.`
+	} else if (remainingGuesses === 1){
+		remainingGuessesSpan.innerText = `You have ${remainingGuesses} guess remaining`;
+	}
+	else{
+		remainingGuessesSpan.innerText = `You have ${remainingGuesses} left`;
+	}
+};
 
