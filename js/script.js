@@ -12,7 +12,7 @@ const playAgainButton = document.querySelector(".hide");
 let word = "magnolia";
 
 //Guessed letters will be stored in this array
-const guessedLetters = [];
+let guessedLetters = [];
 
 // Number of guesses left
 // let is used here instead of const because this variable is reassigned a value
@@ -29,6 +29,7 @@ const getWord = async function(){
 	const randomIndex = Math.floor(Math.random()* wordArray.length);
 	word = wordArray[randomIndex].trim();
 	placeholder(word);
+	//console.log(word); // shows me the word in the console log
 };
 
 
@@ -42,7 +43,7 @@ const placeholder = function(word){
 	//use an empty array to store the word
 	const symbolsForLetters = [];
 	for (let letters of word){
-		console.log(letters); // can see the random word in the console log 
+		//console.log(letters); // can see the random word in the console log 
 		symbolsForLetters.push("●");
 	};
 	
@@ -63,28 +64,28 @@ guessButton.addEventListener("click", function(e){
 	guessLetterMessages.innerText = "";
 	// save the function call to a variable, so the variable is going to store the value of the guessinput
 	const goodGuess = validateInput(guess);
-	console.log(goodGuess);
+	//console.log(goodGuess);
 	
 	makeGuess(goodGuess);
 })
 
 
 //Function to check Player's Input is a letter. Its not checking if its the right letter thats the makeGuess function
-const validateInput = function(input){
+const validateInput = function(guess){
 	const acceptedLetter = /[a-zA-Z]/;
 	//using length to determine if the input is empty instead of an empty string ""
-	if(input.length === 0){
+	if(guess.length === 0){
 		guessLetterMessages.innerText ="Guess a letter.";
-	} else if (input.length > 1){
+	} else if (guess.length > 1){
 		guessLetterMessages.innerText = "Too many letters";
 	} 
 	//match is used to make sure an alphabet is being used and not some other symbol. USE ! to show something is NOT adding up
-	else if (!input.match(acceptedLetter)){
+	else if (!guess.match(acceptedLetter)){
 		guessLetterMessages.innerText ="Guess a letter from A to Z";
 	}
 	//return input if the correct letter is guessed
 	else{
-		return input;
+		return guess;
 	}
 }
 
@@ -97,14 +98,15 @@ const makeGuess = function(guess){
 		guessLetterMessages.innerText = "Already guessed this letter. Try Again"
 	}
 	else {
-		guessedLetters.push(guess);
-		console.log(guessedLetters);
+		guessedLetters.push(guess); // pushing letters into the guessedletters array
+		//console.log(guessedLetters);
 		//call showGuessedLetters here so it displays a letter that hasn't been guessed before
 		
 		showGuessedLetters();
+		countGuessesRemaining(guess);
 		updateWordInProgress(guessedLetters);
 		 // guess argument is the guessInput which is the inputLetter value. So the letter I put in the box
-		countGuessesRemaining(guess);
+		
 	}
 }
 
@@ -144,15 +146,9 @@ const updateWordInProgress = function(guessedLetters){
 		
 	}
 
-//Function to check if the player won
 
-const playerWon = function(){
-	if (word.toUpperCase()===wordInProgress.innerText){
-		guessLetterMessages.classList.add("win");
-		guessLetterMessages.innerHTML = `<p class = "highlight"> You guessed the correct word ${word}! Congrats!</p>`;
-	}
-}
 // function to count guesses remaining
+
 const countGuessesRemaining = function(guess){
 	const upperWord = word.toUpperCase();
 	if (!upperWord.includes(guess)){
@@ -164,11 +160,47 @@ const countGuessesRemaining = function(guess){
 	
 	if(remainingGuesses === 0){
 		guessLetterMessages.innerHTML = `Game over and the word is <span class = "highlight">${upperWord}</span>.`
+		remainingGuessesSpan.innerText= "";
+		startOver();
 	} else if (remainingGuesses === 1){
-		remainingGuessesSpan.innerText = `You have ${remainingGuesses} guess remaining`;
+		remainingGuessesSpan.innerText = `${remainingGuesses} guesses remaining`;
 	}
 	else{
-		remainingGuessesSpan.innerText = `You have ${remainingGuesses} left`;
+		remainingGuessesSpan.innerText = `${remainingGuesses} guesses remaining`;
 	}
-};
+}; 
 
+//Function to check if the player won
+
+const playerWon = function(){
+	if (word.toUpperCase()===wordInProgress.innerText){
+		guessLetterMessages.classList.add("win");
+		guessLetterMessages.innerHTML = `<p class = "highlight">${word.toUpperCase()} is the correct word, Congrats!</p>`;
+		startOver();
+	}
+}
+
+const startOver = function(){
+	guessButton.classList.add("hide");
+	remainingGuessesSpan.classList.add("hide");
+	guessedLettersElement.classList.add("hide");
+	playAgainButton.classList.remove("hide");
+	
+}
+
+playAgainButton.addEventListener("click", function(){
+	guessLetterMessages.classList.remove("win");
+	guessLetterMessages.innerText= "";
+	guessedLettersElement.innerText="";
+	remainingGuesses = 8; 
+	guessedLetters = [];
+	remainingGuessesSpan.innerText= `You have ${remainingGuesses} guesses remaining`;
+	
+	guessButton.classList.remove("hide");
+	remainingGuessesSpan.classList.remove("hide");
+	guessedLettersElement.classList.remove("hide");
+	playAgainButton.classList.add("hide");
+	
+	//calling the getword async function so a new word appears
+	getWord();
+})
