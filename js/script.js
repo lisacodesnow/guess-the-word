@@ -55,14 +55,14 @@ wordInProgress.innerText = symbolsForLetters.join("");
 guessButton.addEventListener("click", function(e){
 	e.preventDefault(); // prevents browser from submitting the form
 	// the letter entered
-	const guessInput = inputLetter.value;
+	const guess = inputLetter.value;
 	//console.log(guessInput);
 	//empty the letter guessed
 	inputLetter.value = "";
 	//empty the message
 	guessLetterMessages.innerText = "";
 	// save the function call to a variable, so the variable is going to store the value of the guessinput
-	const goodGuess = validateInput(guessInput);
+	const goodGuess = validateInput(guess);
 	console.log(goodGuess);
 	
 	makeGuess(goodGuess);
@@ -90,10 +90,10 @@ const validateInput = function(input){
 
 //Function to Capture Input so it can be compared against the letters in the array. If its the same letter then a message will appear
 
-const makeGuess = function(guessInput){
+const makeGuess = function(guess){
 	// Java is case sensitive so convert text to uppercase
-	guess = guessInput.toUpperCase();
-	if (guessInput.includes(guess)){
+	guess = guess.toUpperCase();
+	if (guessedLetters.includes(guess)){
 		guessLetterMessages.innerText = "Already guessed this letter. Try Again"
 	}
 	else {
