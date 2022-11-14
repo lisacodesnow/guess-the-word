@@ -29,7 +29,7 @@ const getWord = async function(){
 	const randomIndex = Math.floor(Math.random()* wordArray.length);
 	word = wordArray[randomIndex].trim();
 	placeholder(word);
-	//console.log(word); // shows me the word in the console log
+	console.log(`The word is ${word}`); // shows me the word in the console log
 };
 
 
@@ -66,9 +66,11 @@ guessButton.addEventListener("click", function(e){
 	const goodGuess = validateInput(guess);
 	//console.log(goodGuess);
 	
-	makeGuess(goodGuess);
-})
-
+	//the if statment is so the argument will pass ONLY if its a valid character. When I didn't have it, it would pass everything, numbers, blanks and I would get an .toUpperCase error
+	if(goodGuess){
+		makeGuess(goodGuess);
+	};
+});
 
 //Function to check Player's Input is a letter. Its not checking if its the right letter thats the makeGuess function
 const validateInput = function(guess){
