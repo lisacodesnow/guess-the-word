@@ -16,6 +16,7 @@ body {
   background-size: 800px;
   background-repeat: repeat;
   color: #305050;
+  height: 100vh;
 }
 
 .logo {
