@@ -15,35 +15,30 @@ let word = "magnolia";
 let guessedLetters = [];
 
 // Number of guesses left
-// let is used here instead of const because this variable is reassigned a value
+
 let remainingGuesses = 8;
 
 const getWord = async function(){
 	const res = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
-	// this shows the data as a text file instead of json 
 	const words = await res.text()
 	//console.log(data);
-	//creates an array and the "n" is a delimiter, a character to seperate the words, in the split method
+	
 	const wordArray = words.split("\n");
 	//console.log(wordArray);
 	const randomIndex = Math.floor(Math.random()* wordArray.length);
 	word = wordArray[randomIndex].trim();
 	placeholder(word);
-	console.log(`The word is ${word}`); // shows me the word in the console log
+	
 };
-
 
 
 getWord();
 
-
 //Function to add placeholders for each letter
 
 const placeholder = function(word){
-	//use an empty array to store the word
 	const symbolsForLetters = [];
 	for (let letters of word){
-		//console.log(letters); // can see the random word in the console log 
 		symbolsForLetters.push("●");
 	};
 	
@@ -54,19 +49,14 @@ wordInProgress.innerText = symbolsForLetters.join("");
 // Add event listener for button and inputing letters into the guess space
 
 guessButton.addEventListener("click", function(e){
-	e.preventDefault(); // prevents browser from submitting the form
-	// the letter entered
+	e.preventDefault(); 
 	const guess = inputLetter.value;
 	//console.log(guessInput);
-	//empty the letter guessed
 	inputLetter.value = "";
-	//empty the message
 	guessLetterMessages.innerText = "";
-	// save the function call to a variable, so the variable is going to store the value of the guessinput
 	const goodGuess = validateInput(guess);
 	//console.log(goodGuess);
 	
-	//the if statment is so the argument will pass ONLY if its a valid character. When I didn't have it, it would pass everything, numbers, blanks and I would get an .toUpperCase error
 	if(goodGuess){
 		makeGuess(goodGuess);
 	};
@@ -74,14 +64,12 @@ guessButton.addEventListener("click", function(e){
 
 //Function to check Player's Input is a letter. Its not checking if its the right letter thats the makeGuess function
 const validateInput = function(guess){
-	const acceptedLetter = /[a-zA-Z]/;
-	//using length to determine if the input is empty instead of an empty string ""
+	const acceptedLetter = /[a-zA-Z]/;	
 	if(guess.length === 0){
 		guessLetterMessages.innerText ="Guess a letter.";
 	} else if (guess.length > 1){
 		guessLetterMessages.innerText = "Too many letters";
 	} 
-	//match is used to make sure an alphabet is being used and not some other symbol. USE ! to show something is NOT adding up
 	else if (!guess.match(acceptedLetter)){
 		guessLetterMessages.innerText ="Guess a letter from A to Z";
 	}
@@ -94,20 +82,17 @@ const validateInput = function(guess){
 //Function to Capture Input so it can be compared against the letters in the array. If its the same letter then a message will appear
 
 const makeGuess = function(guess){
-	// Java is case sensitive so convert text to uppercase
 	guess = guess.toUpperCase();
 	if (guessedLetters.includes(guess)){
 		guessLetterMessages.innerText = "Already guessed this letter. Try Again"
 	}
 	else {
-		guessedLetters.push(guess); // pushing letters into the guessedletters array
+		guessedLetters.push(guess);
 		//console.log(guessedLetters);
-		//call showGuessedLetters here so it displays a letter that hasn't been guessed before
-		
 		showGuessedLetters();
 		countGuessesRemaining(guess);
 		updateWordInProgress(guessedLetters);
-		 // guess argument is the guessInput which is the inputLetter value. So the letter I put in the box
+		
 		
 	}
 }
@@ -116,21 +101,18 @@ const makeGuess = function(guess){
 
 
 const showGuessedLetters = function(){
-	//Clear the list first
 	guessedLettersElement.innerHTML = "";
 	for (const letter of guessedLetters) {
 		let li = document.createElement("li");
 		li.innerText = letter;
-		guessedLettersElement.append(li);
-		
-		
+		guessedLettersElement.append(li);			
 	}
 }; 
  // Function to update word in progress and to reveal the correct letters in place of the dot
 
 const updateWordInProgress = function(guessedLetters){
 	const wordUpper = word.toUpperCase();
-	// I see splitting the wordupper's string as splitting the word into letters
+	
 	const wordArray = wordUpper.split("");
 	//console.log(wordArray);
 	const revealWord = [];
@@ -141,7 +123,6 @@ const updateWordInProgress = function(guessedLetters){
 			revealWord.push("●");
 		}
 	}
-	//join is joining array elements into a string
 	wordInProgress.innerText = revealWord.join("");
 	
 	playerWon();
@@ -203,6 +184,6 @@ playAgainButton.addEventListener("click", function(){
 	guessedLettersElement.classList.remove("hide");
 	playAgainButton.classList.add("hide");
 	
-	//calling the getword async function so a new word appears
+
 	getWord();
 })
