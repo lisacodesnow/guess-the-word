@@ -37,7 +37,7 @@ const getWord = async function(){
 getWord();
 
 
-//Function to add placeholders for each letter
+
 
 const placeholder = function(word){
 	//use an empty array to store the word
